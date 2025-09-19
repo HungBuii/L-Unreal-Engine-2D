@@ -3,7 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InputAction.h"
 #include "GameFramework/Pawn.h"
+
 #include "PlayerCharacter.generated.h"
 
 UCLASS()
@@ -24,9 +26,9 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
-	void Move(const class FInputActionValue& Value);
+	void Move(const FInputActionValue& Value);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UCapsuleComponent* CapsuleComp;

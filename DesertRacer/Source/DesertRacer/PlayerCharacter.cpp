@@ -71,6 +71,41 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
+	FVector2D MoveActionValue = Value.Get<FVector2D>();
+	// GEngine->AddOnScreenDebugMessage(1, 10.f, FColor::White, MoveActionValue.ToString());
+
+	if (CanMove)
+	{
+		float DeltaTime = GetWorld()->GetDeltaSeconds();
+
+		// if (abs(MoveActionValue.X) > 0.f)
+		// {
+		// 	float RotationAmount = RotationSpeed * MoveActionValue.X * DeltaTime;
+		// 	AddActorWorldRotation(FRotator(-RotationAmount, 0, 0));
+		// } // Apply to situations where a car is stationary and can still be turned.
+		
+		if (abs(MoveActionValue.Y) > 0.f)
+		{
+			if (abs(MoveActionValue.X) > 0.f)
+			{
+				float RotationAmount = RotationSpeed * MoveActionValue.X * DeltaTime;
+				AddActorWorldRotation(FRotator(-RotationAmount, 0, 0));
+			} // Apply to situations where the car is stationary but cannot be turned.
+			
+			float FinalMovementSpeed = MovementSpeed;
+			if (MoveActionValue.Y < 0.f)
+			{
+				FinalMovementSpeed *= 0.5f;
+			}
+			
+			FVector CurrentLocation = GetActorLocation();
+			FVector DistanceToMove = GetActorUpVector() * FinalMovementSpeed * MoveActionValue.Y * DeltaTime;
+			// GetActorUpVector(): direction of Z vector in world space
+			FVector NewLocation = CurrentLocation + DistanceToMove;
+			
+			SetActorLocation(NewLocation);
+		}
+	}
 	
 }
 

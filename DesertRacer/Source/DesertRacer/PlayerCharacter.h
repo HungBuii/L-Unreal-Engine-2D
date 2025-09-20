@@ -48,4 +48,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class UInputAction* MoveAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MovementSpeed = 1000.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float RotationSpeed = 100.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool CanMove = true;
 };

@@ -30,6 +30,8 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UPaperSpriteComponent* ObstacleSprite;
 
+	class AMyGameModeBase* MyGameMode;
+
 	UFUNCTION()
 	void OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int OtherBodyIndex, bool FromSweep, const FHitResult& SweepResult);

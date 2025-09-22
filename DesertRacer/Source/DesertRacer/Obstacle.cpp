@@ -3,9 +3,11 @@
 
 #include "Obstacle.h"
 
+#include "MyGameModeBase.h"
 #include "PaperSpriteComponent.h"
 #include "PlayerCharacter.h"
 #include "Components/CapsuleComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AObstacle::AObstacle()
@@ -27,6 +29,8 @@ void AObstacle::BeginPlay()
 	Super::BeginPlay();
 
 	CapsuleComp->OnComponentBeginOverlap.AddDynamic(this, &AObstacle::OverlapBegin);
+	
+	MyGameMode = Cast<AMyGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
 }
 
 // Called every frame
@@ -48,6 +52,8 @@ void AObstacle::OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* O
 		if (Player->CanMove)
 		{
 			Player->CanMove = false;
+
+			MyGameMode->ResetLevel(false);
 		}
 	}
 }

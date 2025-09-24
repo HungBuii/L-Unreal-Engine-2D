@@ -48,12 +48,19 @@ void AObstacle::OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* O
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::White, TEXT("Overlapped with player"));
 		UE_LOG(LogTemp, Warning, TEXT("OtherActor: %s"), *OtherActor->GetActorNameOrLabel());
+		UE_LOG(LogTemp, Warning, TEXT("OverlappedComponent: %s"), *OverlappedComponent->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("OtherComp: %s"), *OtherComp->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("OtherBodyIndex: %i"), OtherBodyIndex);
+		UE_LOG(LogTemp, Warning, TEXT("FromSweep: %d"), FromSweep);
+		UE_LOG(LogTemp, Warning, TEXT("SweepResult: %s"), *SweepResult.ToString());
 		
 		if (Player->CanMove)
 		{
 			Player->CanMove = false;
 
-			MyGameMode->ResetLevel(false);
+			UGameplayStatics::PlaySound2D(GetWorld(), HitSound);
+			
+			MyGameMode->ResetLevel(IsFinishLine);
 		}
 	}
 }

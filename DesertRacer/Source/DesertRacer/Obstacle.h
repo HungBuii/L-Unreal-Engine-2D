@@ -30,6 +30,12 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UPaperSpriteComponent* ObstacleSprite;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class USoundBase* HitSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool IsFinishLine = false;
+
 	class AMyGameModeBase* MyGameMode;
 
 	UFUNCTION()

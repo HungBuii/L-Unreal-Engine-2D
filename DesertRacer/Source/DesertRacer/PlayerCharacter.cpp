@@ -78,19 +78,19 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 	{
 		float DeltaTime = GetWorld()->GetDeltaSeconds();
 
-		// if (abs(MoveActionValue.X) > 0.f)
-		// {
-		// 	float RotationAmount = RotationSpeed * MoveActionValue.X * DeltaTime;
-		// 	AddActorWorldRotation(FRotator(-RotationAmount, 0, 0));
-		// } // Apply to situations where a car is stationary and can still be turned.
+		if (abs(MoveActionValue.X) > 0.f)
+		{
+			float RotationAmount = RotationSpeed * MoveActionValue.X * DeltaTime;
+			AddActorWorldRotation(FRotator(-RotationAmount, 0, 0));
+		} // Apply to situations where a car is stationary and can still be turned.
 		
 		if (abs(MoveActionValue.Y) > 0.f)
 		{
-			if (abs(MoveActionValue.X) > 0.f)
-			{
-				float RotationAmount = RotationSpeed * MoveActionValue.X * DeltaTime;
-				AddActorWorldRotation(FRotator(-RotationAmount, 0, 0));
-			} // Apply to situations where the car is stationary but cannot be turned.
+			// if (abs(MoveActionValue.X) > 0.f)
+			// {
+			// 	float RotationAmount = -RotationSpeed * MoveActionValue.X * DeltaTime;
+			// 	AddActorWorldRotation(FRotator(RotationAmount, 0, 0));
+			// } // Apply to situations where the car is stationary but cannot be turned.
 			
 			float FinalMovementSpeed = MovementSpeed;
 			if (MoveActionValue.Y < 0.f)
@@ -100,7 +100,7 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 			
 			FVector CurrentLocation = GetActorLocation();
 			FVector DistanceToMove = GetActorUpVector() * FinalMovementSpeed * MoveActionValue.Y * DeltaTime;
-			// GetActorUpVector(): direction of Z vector in world space
+			// GetActorUpVector(): direction of Z vector in world space (positive)
 			FVector NewLocation = CurrentLocation + DistanceToMove;
 			
 			SetActorLocation(NewLocation);

@@ -41,11 +41,54 @@ void ATopdownCharacter::BeginPlay()
 	}
 }
 
+bool ATopdownCharacter::IsInMapBoundsHorizontal(float XPos)
+{
+	bool Result = true;
+	Result = (XPos > HorizontalLimits.X) && (XPos < HorizontalLimits.Y);
+
+	return Result;
+}
+
+bool ATopdownCharacter::IsInMapBoundsVertical(float ZPos)
+{
+	bool Result = true;
+	Result = (ZPos > VerticalLimits.X) && (ZPos < VerticalLimits.Y);
+
+	return Result;
+}
+
 // Called every frame
 void ATopdownCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (CanMove)
+	{
+		if (MovementDirection.Length() > 0.f)
+		{
+			if (MovementDirection.Length() > 1.0f)
+			{
+				MovementDirection.Normalize();
+			}
+
+			FVector2D DistanceToMove = MovementDirection * MovementSpeed * DeltaTime;
+			FVector CurrentLocation = GetActorLocation();
+			FVector NewLocation = CurrentLocation + FVector(DistanceToMove.X, 0.f, 0.f);
+			if (!IsInMapBoundsHorizontal(NewLocation.X))
+			{
+				NewLocation -= FVector(DistanceToMove.X, 0.f, 0.f);
+			}
+	
+			NewLocation += FVector(0.f, 0.f, DistanceToMove.Y);
+			if (!IsInMapBoundsVertical(NewLocation.Z))
+			{
+				NewLocation -= FVector(0.f, 0.f, DistanceToMove.Y);
+			}
+			
+			SetActorLocation(NewLocation);
+		}
+	}
+	
 }
 
 // Called to bind functionality to input
@@ -69,12 +112,37 @@ void ATopdownCharacter::MoveTriggered(const FInputActionValue& Value)
 {
 	FVector2D MoveActionValue = Value.Get<FVector2D>();
 
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, MoveActionValue.ToString());
+	// GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, MoveActionValue.ToString());
+
+	if (CanMove)
+	{
+		MovementDirection = MoveActionValue;
+		CharacterFlipbook->SetFlipbook(RunFlipbook);
+
+		FVector FlipbookScale = CharacterFlipbook->GetComponentScale();
+		if (MovementDirection.X < 0.f)
+		{
+			if (FlipbookScale.X > 0.f)
+			{
+				CharacterFlipbook->SetWorldScale3D(FVector(-1.f, 1.f, 1.f));
+			}
+		}
+		else if (MovementDirection.X > 0.f)
+		{
+			if (FlipbookScale.X < 0.f)
+			{
+				CharacterFlipbook->SetWorldScale3D(FVector(1.f, 1.f, 1.f));
+			}
+		}
+	}
 }
 
 void ATopdownCharacter::MoveCompleted(const FInputActionValue& Value)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, TEXT("MoveCompleted"));
+	// GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, TEXT("MoveCompleted"));
+
+	MovementDirection = FVector2D::ZeroVector;
+	CharacterFlipbook->SetFlipbook(IdleFlipbook);
 }
 
 void ATopdownCharacter::Shoot(const FInputActionValue& Value)

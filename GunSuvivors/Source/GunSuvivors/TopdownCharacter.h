@@ -43,8 +43,34 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class UInputAction* ShootAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class UPaperFlipbook* IdleFlipbook;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class UPaperFlipbook* RunFlipbook;
+
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector2D HorizontalLimits;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector2D VerticalLimits;
+	
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MovementSpeed = 100.f;
+
+	UPROPERTY(BlueprintReadWrite)
+	FVector2D MovementDirection;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool CanMove = true;
+
 	void MoveTriggered(const FInputActionValue& Value);
 	void MoveCompleted(const FInputActionValue& Value);
 	void Shoot(const FInputActionValue& Value);
 
+	bool IsInMapBoundsHorizontal(float XPos);
+	bool IsInMapBoundsVertical(float ZPos);
+	
 };

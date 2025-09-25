@@ -6,6 +6,8 @@
 #include "GameFramework/Pawn.h"
 #include "TopdownCharacter.generated.h"
 
+struct FInputActionValue;
+
 UCLASS()
 class GUNSUVIVORS_API ATopdownCharacter : public APawn
 {
@@ -31,5 +33,18 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UPaperFlipbookComponent* CharacterFlipbook;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class UInputMappingContext* InputMappingContext;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class UInputAction* MoveAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class UInputAction* ShootAction;
+
+	void MoveTriggered(const FInputActionValue& Value);
+	void MoveCompleted(const FInputActionValue& Value);
+	void Shoot(const FInputActionValue& Value);
 
 };

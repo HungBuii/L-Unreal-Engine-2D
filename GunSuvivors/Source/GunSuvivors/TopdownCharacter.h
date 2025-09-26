@@ -34,6 +34,15 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UPaperFlipbookComponent* CharacterFlipbook;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	class USceneComponent* GunParent;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	class UPaperSpriteComponent* GunSprite;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	class USceneComponent* BulletSpawnPosition;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class UInputMappingContext* InputMappingContext;
 

@@ -8,6 +8,8 @@
 
 #include "Components/CapsuleComponent.h"
 #include "PaperFlipbookComponent.h"
+#include "PaperSpriteComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 ATopdownCharacter::ATopdownCharacter()
@@ -20,6 +22,15 @@ ATopdownCharacter::ATopdownCharacter()
 
 	CharacterFlipbook = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("CharacterFlipbook"));
 	CharacterFlipbook->SetupAttachment(RootComponent);
+
+	GunParent = CreateDefaultSubobject<USceneComponent>(TEXT("GunParent"));
+	GunParent->SetupAttachment(RootComponent);
+
+	GunSprite = CreateDefaultSubobject<UPaperSpriteComponent>(TEXT("GunSprite"));
+	GunSprite->SetupAttachment(GunParent);
+
+	BulletSpawnPosition = CreateDefaultSubobject<USceneComponent>(TEXT("BulletSpawnPosition"));
+	BulletSpawnPosition->SetupAttachment(GunSprite);
 	
 }
 
@@ -31,6 +42,8 @@ void ATopdownCharacter::BeginPlay()
 	APlayerController* PlayerController = Cast<APlayerController>(Controller);
 	if (PlayerController)
 	{
+		PlayerController->SetShowMouseCursor(true);
+		
 		UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>
 														(PlayerController->GetLocalPlayer());
 
@@ -62,6 +75,7 @@ void ATopdownCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	// Move player
 	if (CanMove)
 	{
 		if (MovementDirection.Length() > 0.f)
@@ -87,6 +101,21 @@ void ATopdownCharacter::Tick(float DeltaTime)
 			
 			SetActorLocation(NewLocation);
 		}
+	}
+
+	// Rotate the gun
+	APlayerController* PlayerController = Cast<APlayerController>(Controller);
+	if (PlayerController)
+	{
+		FVector MouseWorldLocation, MouseWorldDirection;
+		PlayerController->DeprojectMousePositionToWorld(MouseWorldLocation, MouseWorldDirection);
+
+		FVector CurrentLocation = GetActorLocation();
+		FVector Start = FVector(CurrentLocation.X, 0.f, CurrentLocation.Z);
+		FVector Target = FVector(MouseWorldLocation.X, 0.f, MouseWorldLocation.Z);
+		FRotator GunParentRotator = UKismetMathLibrary::FindLookAtRotation(Start, Target);
+
+		GunParent->SetRelativeRotation(GunParentRotator);
 	}
 	
 }

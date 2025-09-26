@@ -176,6 +176,22 @@ void ATopdownCharacter::MoveCompleted(const FInputActionValue& Value)
 
 void ATopdownCharacter::Shoot(const FInputActionValue& Value)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT("Shoot"));
+	if (CanShoot)
+	{
+		CanShoot = false;
+
+		// Bullet Spawn code...
+		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT("Shoot"));
+		GetWorldTimerManager().SetTimer(ShootCooldownTimer, this, &ATopdownCharacter::OnShootCooldownTimerTimeout, \
+			1.f, false, ShootCooldownDurationInSeconds);
+
+		
+	}
+}
+
+void ATopdownCharacter::OnShootCooldownTimerTimeout()
+{
+	CanShoot = true;
+	
 }
 

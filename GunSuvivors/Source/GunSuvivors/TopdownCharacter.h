@@ -75,11 +75,21 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool CanMove = true;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool CanShoot = true;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float ShootCooldownDurationInSeconds = 0.3f;
+
+	FTimerHandle ShootCooldownTimer;
+	
+	
 	void MoveTriggered(const FInputActionValue& Value);
 	void MoveCompleted(const FInputActionValue& Value);
 	void Shoot(const FInputActionValue& Value);
 
 	bool IsInMapBoundsHorizontal(float XPos);
 	bool IsInMapBoundsVertical(float ZPos);
-	
+
+	void OnShootCooldownTimerTimeout();
 };

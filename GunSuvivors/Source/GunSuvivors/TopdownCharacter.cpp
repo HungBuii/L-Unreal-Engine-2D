@@ -204,7 +204,7 @@ void ATopdownCharacter::Shoot(const FInputActionValue& Value)
 		float BulletSpeed = 300.f;
 		Bullet->Launch(BulletDirection, BulletSpeed);
 		
-		GetWorldTimerManager().SetTimer(ShootCooldownTimer, this, &ATopdownCharacter::OnShootCooldownTimerTimeout, \
+		GetWorldTimerManager().SetTimer(ShootCooldownTimer, this, &ATopdownCharacter::OnShootCooldownTimerTimeout,
 			1.f, false, ShootCooldownDurationInSeconds);
 
 		

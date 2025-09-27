@@ -25,8 +25,7 @@ ABullet::ABullet()
 void ABullet::BeginPlay()
 {
 	Super::BeginPlay();
-
-	Launch(FVector2D(0.f, 1.f), 25.f);
+	
 }
 
 // Called every frame

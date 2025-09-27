@@ -3,6 +3,7 @@
 
 #include "TopdownCharacter.h"
 
+#include "Bullet.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 
@@ -182,6 +183,27 @@ void ATopdownCharacter::Shoot(const FInputActionValue& Value)
 
 		// Bullet Spawn code...
 		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT("Shoot"));
+
+		ABullet* Bullet = GetWorld()->SpawnActor<ABullet>(BulletActorToSpawn, BulletSpawnPosition->GetComponentLocation(),
+			FRotator::ZeroRotator);
+		check(Bullet);
+
+		// Get mouse world location
+		APlayerController* PlayerController = Cast<APlayerController>(Controller);
+		check(PlayerController);
+		FVector MouseWorldLocation, MouseWorldDirection;
+		PlayerController->DeprojectMousePositionToWorld(MouseWorldLocation, MouseWorldDirection);
+
+		// Calculate bullet direction
+		FVector CurrentLocation = GetActorLocation();
+		FVector2D BulletDirection = FVector2D(MouseWorldLocation.X - CurrentLocation.X,
+			MouseWorldLocation.Z - CurrentLocation.Z);
+		BulletDirection.Normalize();
+
+		// Launch the bullet
+		float BulletSpeed = 300.f;
+		Bullet->Launch(BulletDirection, BulletSpeed);
+		
 		GetWorldTimerManager().SetTimer(ShootCooldownTimer, this, &ATopdownCharacter::OnShootCooldownTimerTimeout, \
 			1.f, false, ShootCooldownDurationInSeconds);
 

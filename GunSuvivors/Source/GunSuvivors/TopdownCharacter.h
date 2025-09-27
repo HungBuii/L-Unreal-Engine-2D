@@ -64,6 +64,9 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector2D VerticalLimits;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class ABullet> BulletActorToSpawn;
 	
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

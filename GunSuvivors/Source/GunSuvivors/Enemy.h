@@ -3,8 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "PaperFlipbookComponent.h"
 #include "GameFramework/Actor.h"
 #include "Enemy.generated.h"
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEnemyDiedDelegate);
 
 UCLASS()
 class GUNSUVIVORS_API AEnemy : public AActor
@@ -29,7 +32,10 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UPaperFlipbookComponent* EnemyFlipbook;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPaperFlipbook* DeadFlipbookAsset;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class ATopdownCharacter* Player;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
@@ -43,5 +49,13 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float StopDistance = 20.f;
+
+	FTimerHandle DestroyTimer;
+
+	FEnemyDiedDelegate EnemyDiedDelegate; 
+
+	void Die();
+
+	void OnDestroyTimerTimeout();
 
 };

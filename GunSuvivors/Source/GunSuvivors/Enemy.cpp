@@ -6,7 +6,6 @@
 #include "PaperFlipbookComponent.h"
 #include "TopdownCharacter.h"
 #include "Components/CapsuleComponent.h"
-#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AEnemy::AEnemy()

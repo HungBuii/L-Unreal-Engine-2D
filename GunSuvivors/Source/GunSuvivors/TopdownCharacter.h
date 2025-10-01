@@ -8,6 +8,8 @@
 
 struct FInputActionValue;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPlayerDiedDelegate);
+
 UCLASS()
 class GUNSUVIVORS_API ATopdownCharacter : public APawn
 {
@@ -58,6 +60,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class UPaperFlipbook* RunFlipbook;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class USoundBase* BulletShootSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class USoundBase* DieSound;
+	
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector2D HorizontalLimits;
@@ -80,11 +88,16 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool CanShoot = true;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool IsAlive = true;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float ShootCooldownDurationInSeconds = 0.3f;
 
 	FTimerHandle ShootCooldownTimer;
+
+	FPlayerDiedDelegate PlayerDiedDelegate;
 	
 	
 	void MoveTriggered(const FInputActionValue& Value);
@@ -95,4 +108,8 @@ public:
 	bool IsInMapBoundsVertical(float ZPos);
 
 	void OnShootCooldownTimerTimeout();
+
+	UFUNCTION()
+	void OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int OtherBodyIndex, bool FromSweep, const FHitResult& SweepResult);
 };

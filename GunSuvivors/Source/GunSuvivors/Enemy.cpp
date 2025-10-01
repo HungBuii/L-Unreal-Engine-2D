@@ -6,6 +6,7 @@
 #include "PaperFlipbookComponent.h"
 #include "TopdownCharacter.h"
 #include "Components/CapsuleComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AEnemy::AEnemy()
@@ -80,6 +81,8 @@ void AEnemy::Die()
 	EnemyFlipbook->SetTranslucentSortPriority(-5);
 
 	EnemyDiedDelegate.Broadcast();
+
+	UGameplayStatics::PlaySound2D(GetWorld(), DieSound);
 	
 	float DestroyTime = 10.f;
 	GetWorldTimerManager().SetTimer(DestroyTimer, this, &AEnemy::OnDestroyTimerTimeout,

@@ -35,6 +35,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UPaperFlipbook* DeadFlipbookAsset;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class USoundBase* DieSound;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class ATopdownCharacter* Player;
 

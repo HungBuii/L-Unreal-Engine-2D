@@ -4,12 +4,14 @@
 #include "TopdownCharacter.h"
 
 #include "Bullet.h"
+#include "Enemy.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 
 #include "Components/CapsuleComponent.h"
 #include "PaperFlipbookComponent.h"
 #include "PaperSpriteComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
@@ -53,6 +55,8 @@ void ATopdownCharacter::BeginPlay()
 			Subsystem->AddMappingContext(InputMappingContext, 0);
 		}
 	}
+	
+	CapsuleComp->OnComponentBeginOverlap.AddDynamic(this, &ATopdownCharacter::OverlapBegin);
 }
 
 bool ATopdownCharacter::IsInMapBoundsHorizontal(float XPos)
@@ -172,7 +176,12 @@ void ATopdownCharacter::MoveCompleted(const FInputActionValue& Value)
 	// GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, TEXT("MoveCompleted"));
 
 	MovementDirection = FVector2D::ZeroVector;
-	CharacterFlipbook->SetFlipbook(IdleFlipbook);
+
+	if (IsAlive)
+	{
+		CharacterFlipbook->SetFlipbook(IdleFlipbook);
+	}
+	
 }
 
 void ATopdownCharacter::Shoot(const FInputActionValue& Value)
@@ -206,14 +215,37 @@ void ATopdownCharacter::Shoot(const FInputActionValue& Value)
 		
 		GetWorldTimerManager().SetTimer(ShootCooldownTimer, this, &ATopdownCharacter::OnShootCooldownTimerTimeout,
 			1.f, false, ShootCooldownDurationInSeconds);
-
+		
+		UGameplayStatics::PlaySound2D(GetWorld(), BulletShootSound);
 		
 	}
 }
 
 void ATopdownCharacter::OnShootCooldownTimerTimeout()
 {
-	CanShoot = true;
-	
+	if (IsAlive)
+	{
+		CanShoot = true;
+	}
+}
+
+void ATopdownCharacter::OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int OtherBodyIndex, bool FromSweep, const FHitResult& SweepResult)
+{
+	AEnemy* Enemy = Cast<AEnemy>(OtherActor);
+
+	if (Enemy && Enemy->IsAlive)
+	{
+		if (IsAlive)
+		{
+			IsAlive = false;
+			CanMove = false;
+			CanShoot = false;
+
+			UGameplayStatics::PlaySound2D(GetWorld(), DieSound);
+			
+			PlayerDiedDelegate.Broadcast();
+		}
+	}
 }
 

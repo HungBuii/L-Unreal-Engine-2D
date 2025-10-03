@@ -9,6 +9,9 @@
 /**
  * 
  */
+
+struct FInputActionValue;
+
 UCLASS()
 class CRUSTYPIRATE_API APlayerCharacter : public APaperZDCharacter
 {
@@ -21,8 +24,36 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UCameraComponent* Camera;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class UInputMappingContext* InputMappingContext;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class UInputAction* MoveAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class UInputAction* JumpAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class UInputAction* AttackAction;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	bool IsAlive = true;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	bool CanMove = true;
+
+	
 	APlayerCharacter();
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
-	
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	void Move(const FInputActionValue& Value);
+	void JumpStarted(const FInputActionValue& Value);
+	void JumpEnded(const FInputActionValue& Value);
+	void Attack(const FInputActionValue& Value);
+
+	void UpdateDirection(float MoveDirection);
 };

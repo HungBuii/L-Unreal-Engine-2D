@@ -27,7 +27,6 @@ void APlayerCharacter::BeginPlay()
 	APlayerController* PlayerController = Cast<APlayerController>(Controller);
 	if (PlayerController)
 	{
-		PlayerController->SetShowMouseCursor(true);
 		
 		UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>
 														(PlayerController->GetLocalPlayer());

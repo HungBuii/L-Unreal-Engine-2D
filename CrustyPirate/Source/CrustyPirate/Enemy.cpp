@@ -29,17 +29,54 @@ void AEnemy::Tick(float DeltaTime)
 	if (IsAlive && FollowTarget)
 	{
 		float MoveDirection = (FollowTarget->GetActorLocation().X - GetActorLocation().X) > 0.f ? 1.f : -1.f;
+		UpdateDirection(MoveDirection);
 
-		if (CanMove)
+		if (ShouldMoveToTarget())
 		{
-			FVector WorldDirection = FVector(1.f, 0.f, 0.f);
-			AddMovementInput(WorldDirection, MoveDirection);
+			if (CanMove)
+			{
+				FVector WorldDirection = FVector(1.f, 0.f, 0.f);
+				AddMovementInput(WorldDirection, MoveDirection);
+			}
+		}
+		
+	}
+}
+
+void AEnemy::UpdateDirection(float MoveDirection)
+{
+	FRotator CurrentRotation = GetActorRotation();
+
+	if (MoveDirection < 0.f)
+	{
+		if (CurrentRotation.Yaw != 180.f)
+		{
+			SetActorRotation(FRotator(CurrentRotation.Pitch, 180.f, CurrentRotation.Roll));
+		}
+	}
+	else if (MoveDirection > 0.f)
+	{
+		if (CurrentRotation.Yaw != 0.f)
+		{
+			SetActorRotation(FRotator(CurrentRotation.Pitch, 0.f, CurrentRotation.Roll));
 		}
 	}
 }
 
+bool AEnemy::ShouldMoveToTarget()
+{
+	bool Result = false;
+	if (FollowTarget)
+	{
+		float DistToTarget = abs(FollowTarget->GetActorLocation().X - GetActorLocation().X);
+		Result = DistToTarget > StopDistanceToTarget;
+	}
+	
+	return Result;
+}
+
 void AEnemy::DetectorOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int OtherBodyIndex, bool FromSweep, const FHitResult& SweepResult)
+                                  UPrimitiveComponent* OtherComp, int OtherBodyIndex, bool FromSweep, const FHitResult& SweepResult)
 {
 	APlayerCharacter* Player = Cast<APlayerCharacter>(OtherActor);
 

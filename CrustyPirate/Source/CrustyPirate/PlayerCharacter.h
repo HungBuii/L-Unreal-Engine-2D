@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "PaperZDCharacter.h"
+#include "PaperZDAnimInstance.h"
+
 #include "PlayerCharacter.generated.h"
 
 /**
@@ -36,12 +38,20 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class UInputAction* AttackAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	const UPaperZDAnimSequence* AttackAnimSequence;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool IsAlive = true;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool CanMove = true;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	bool CanAttack = true;
+
+	FZDOnAnimationOverrideEndSignature OnAttackOverrideEndDelegate;
+	
 	
 	APlayerCharacter();
 	virtual void BeginPlay() override;
@@ -56,4 +66,6 @@ public:
 	void Attack(const FInputActionValue& Value);
 
 	void UpdateDirection(float MoveDirection);
+
+	void OnAttackOverrideAnimEnd(bool Completed);
 };

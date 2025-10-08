@@ -26,6 +26,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UCameraComponent* Camera;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	class UBoxComponent* AttackCollisionBox;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class UInputMappingContext* InputMappingContext;
 
@@ -68,4 +71,12 @@ public:
 	void UpdateDirection(float MoveDirection);
 
 	void OnAttackOverrideAnimEnd(bool Completed);
+
+	UFUNCTION()
+	void AttackBoxOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int OtherBodyIndex, bool FromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION(BlueprintCallable)
+	void EnableAttackCollisionBox(bool Enabled);
+	
 };

@@ -20,10 +20,16 @@ public:
 	class USphereComponent* PlayerDetectorSphere;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	class UTextRenderComponent* HPText;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class APlayerCharacter* FollowTarget;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float StopDistanceToTarget = 70.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int HitPoint = 100;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool IsAlive = true;
@@ -45,4 +51,8 @@ public:
 	
 	bool ShouldMoveToTarget();
 	void UpdateDirection(float MoveDirection);
+
+	void UpdateHP(int NewHP);
+
+	void TakeDamage(int DamageAmount, float StunDuration);
 };

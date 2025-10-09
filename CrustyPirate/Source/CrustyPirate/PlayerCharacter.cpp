@@ -144,6 +144,7 @@ void APlayerCharacter::AttackBoxOverlapBegin(UPrimitiveComponent* OverlappedComp
 
 	if (Enemy)
 	{
+		Enemy->TakeDamage(AttackDamage, AttackStunDuration);
 		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::White, Enemy->GetName());
 	}
 }

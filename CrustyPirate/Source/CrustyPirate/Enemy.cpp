@@ -5,6 +5,8 @@
 
 #include "PlayerCharacter.h"
 #include "Components/SphereComponent.h"
+#include "Components/TextRenderComponent.h"
+#include "PaperZDAnimInstance.h"
 
 AEnemy::AEnemy()
 {
@@ -12,6 +14,9 @@ AEnemy::AEnemy()
 
 	PlayerDetectorSphere = CreateDefaultSubobject<USphereComponent>(TEXT("PlayerDetectorSphere"));
 	PlayerDetectorSphere->SetupAttachment(RootComponent);
+
+	HPText = CreateDefaultSubobject<UTextRenderComponent>(TEXT("HPText"));
+	HPText->SetupAttachment(RootComponent);
 }
 
 void AEnemy::BeginPlay()
@@ -20,6 +25,8 @@ void AEnemy::BeginPlay()
 
 	PlayerDetectorSphere->OnComponentBeginOverlap.AddDynamic(this, &AEnemy::DetectorOverlapBegin);
 	PlayerDetectorSphere->OnComponentEndOverlap.AddDynamic(this, &AEnemy::DetectorOverlapEnd);
+
+	UpdateHP(HitPoint);
 }
 
 void AEnemy::Tick(float DeltaTime)
@@ -94,5 +101,42 @@ void AEnemy::DetectorOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor
 	if (Player)
 	{
 		FollowTarget = NULL;
+	}
+}
+
+void AEnemy::UpdateHP(int NewHP)
+{
+	HitPoint = NewHP;
+
+	FString Str = FString::Printf(TEXT("HP: %d"), HitPoint);
+	HPText->SetText(FText::FromString(Str));
+}
+
+void AEnemy::TakeDamage(int DamageAmount, float StunDuration)
+{
+	if (!IsAlive) return;
+
+	UpdateHP(HitPoint - DamageAmount);
+
+	if (HitPoint <= 0)
+	{
+		// Enemy is dead
+		UpdateHP(0);
+		HPText->SetHiddenInGame(true);
+
+		IsAlive = false;
+		CanMove = false;
+
+		// Play the die animation
+		GetAnimInstance()->JumpToNode(FName("JumpDie"), FName("CrabbyStateMachine"));
+		
+	}
+	else
+	{
+		// Enenmy is alive
+
+		// Play the take hit animation
+		GetAnimInstance()->JumpToNode(FName("JumpTakeHit"), FName("CrabbyStateMachine"));
+		
 	}
 }

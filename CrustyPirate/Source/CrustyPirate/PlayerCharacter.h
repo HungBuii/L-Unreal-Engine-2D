@@ -44,8 +44,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	const UPaperZDAnimSequence* AttackAnimSequence;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UPlayerHUD> PlayerHUDClass;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	class UPlayerHUD* PlayerHUDWidget;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool IsAlive = true;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	bool IsStunned = false;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool CanMove = true;
@@ -63,6 +72,8 @@ public:
 	float AttackStunDuration = 0.3f;
 
 	FZDOnAnimationOverrideEndSignature OnAttackOverrideEndDelegate;
+
+	FTimerHandle StunTimer;
 	
 	
 	APlayerCharacter();
@@ -90,4 +101,7 @@ public:
 
 	void TakeDamage(int DamageAmount, float StunDuration);
 	void UpdateHP(int NewHP);
+
+	void Stun(float DurationInSeconds);
+	void OnStunTimerTimeout();
 };

@@ -42,6 +42,12 @@ public:
 	float AttackCooldownInSeconds = 3.f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	int AttackDamage = 25;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	float AttackStunDuration = 0.3f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool IsAlive = true;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)

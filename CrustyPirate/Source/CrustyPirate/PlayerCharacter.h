@@ -53,6 +53,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool CanAttack = true;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	int HitPoint = 100;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int AttackDamage = 25;
 
@@ -84,5 +87,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void EnableAttackCollisionBox(bool Enabled);
-	
+
+	void TakeDamage(int DamageAmount, float StunDuration);
+	void UpdateHP(int NewHP);
 };

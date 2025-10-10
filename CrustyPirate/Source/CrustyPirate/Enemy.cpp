@@ -218,7 +218,7 @@ void AEnemy::AttackBoxOverlapBegin(UPrimitiveComponent* OverlappedComponent, AAc
 	
 	if (Player)
 	{
-		// Player->TakeDamage();
+		Player->TakeDamage(AttackDamage, AttackStunDuration);
 		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::White, TEXT("Player take Enemy"));
 	}
 }

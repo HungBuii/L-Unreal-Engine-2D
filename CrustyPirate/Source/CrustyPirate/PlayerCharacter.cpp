@@ -3,6 +3,7 @@
 
 #include "PlayerCharacter.h"
 
+#include "CrustyPirateGameInstance.h"
 #include "Enemy.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -49,6 +50,17 @@ void APlayerCharacter::BeginPlay()
 	AttackCollisionBox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::AttackBoxOverlapBegin);
 	EnableAttackCollisionBox(false);
 
+	MyGameInstance = Cast<UCrustyPirateGameInstance>(GetGameInstance());
+	if (MyGameInstance)
+	{
+		HitPoint = MyGameInstance->PlayerHP;
+
+		if (MyGameInstance->IsDoubleJumpUnlocked)
+		{
+			UnlockDoubleJump();
+		}
+	}
+	
 	if (PlayerHUDClass)
 	{
 		PlayerHUDWidget = CreateWidget<UPlayerHUD>(
@@ -57,9 +69,11 @@ void APlayerCharacter::BeginPlay()
 
 		if (PlayerHUDWidget)
 		{
+			PlayerHUDWidget->AddToPlayerScreen();
+			
 			PlayerHUDWidget->SetHP(HitPoint);
-			PlayerHUDWidget->SetDiamonds(60);
-			PlayerHUDWidget->SetLevel(1);
+			PlayerHUDWidget->SetDiamonds(MyGameInstance->CollectedDiamondCount);
+			PlayerHUDWidget->SetLevel(MyGameInstance->CurrentLevelIndex);
 		}
 		
 	}
@@ -199,6 +213,11 @@ void APlayerCharacter::TakeDamage(int DamageAmount, float StunDuration)
 
 		GetAnimInstance()->JumpToNode(FName("JumpDie"), FName("CaptainStateMachine"));
 		EnableAttackCollisionBox(false);
+
+		float RestartDelay = 3.f;
+		GetWorldTimerManager().SetTimer(RestartTimer, this, &APlayerCharacter::OnRestartTimerTimeout,
+		1.f, false, RestartDelay);
+		
 	}
 	else
 	{
@@ -210,7 +229,7 @@ void APlayerCharacter::TakeDamage(int DamageAmount, float StunDuration)
 void APlayerCharacter::UpdateHP(int NewHP)
 {
 	HitPoint = NewHP;
-
+	MyGameInstance->SetPlayerHP(HitPoint);
 	PlayerHUDWidget->SetHP(HitPoint);
 }
 
@@ -232,4 +251,47 @@ void APlayerCharacter::Stun(float DurationInSeconds)
 void APlayerCharacter::OnStunTimerTimeout()
 {
 	IsStunned = false;
+}
+
+void APlayerCharacter::CollectItem(CollectableType ItemType)
+{
+	UGameplayStatics::PlaySound2D(GetWorld(), ItemPickupSound);
+
+	switch (ItemType)
+	{
+	case CollectableType::HealthPotion:
+		{
+			int healAmount = 25;
+			UpdateHP(HitPoint + healAmount);
+		} break;
+
+	case CollectableType::Diamond:
+		{
+			MyGameInstance->AddDiamond(1);
+			PlayerHUDWidget->SetDiamonds(MyGameInstance->CollectedDiamondCount);
+		} break;
+
+	case CollectableType::DoubleJumpUpgrade:
+		{
+			if (!MyGameInstance->IsDoubleJumpUnlocked)
+			{
+				MyGameInstance->IsDoubleJumpUnlocked = true;
+				UnlockDoubleJump();
+			}
+		} break;
+
+	default:
+		{
+		} break;
+	}
+}
+
+void APlayerCharacter::UnlockDoubleJump()
+{
+	JumpMaxCount = 2;
+}
+
+void APlayerCharacter::OnRestartTimerTimeout()
+{
+	MyGameInstance->RestartGame();
 }

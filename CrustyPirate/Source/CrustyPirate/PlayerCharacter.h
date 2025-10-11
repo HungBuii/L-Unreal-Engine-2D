@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "CollectableItem.h"
 #include "PaperZDCharacter.h"
 #include "PaperZDAnimInstance.h"
 
@@ -50,6 +51,12 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UPlayerHUD* PlayerHUDWidget;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	class UCrustyPirateGameInstance* MyGameInstance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundBase* ItemPickupSound;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool IsAlive = true;
 
@@ -74,6 +81,7 @@ public:
 	FZDOnAnimationOverrideEndSignature OnAttackOverrideEndDelegate;
 
 	FTimerHandle StunTimer;
+	FTimerHandle RestartTimer;
 	
 	
 	APlayerCharacter();
@@ -104,4 +112,9 @@ public:
 
 	void Stun(float DurationInSeconds);
 	void OnStunTimerTimeout();
+
+	void CollectItem(CollectableType ItemType);
+	void UnlockDoubleJump();
+
+	void OnRestartTimerTimeout();
 };

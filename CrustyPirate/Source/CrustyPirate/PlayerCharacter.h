@@ -43,6 +43,9 @@ public:
 	class UInputAction* AttackAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class UInputAction* QuitAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	const UPaperZDAnimSequence* AttackAnimSequence;
 
 	UPROPERTY(EditAnywhere)
@@ -122,4 +125,6 @@ public:
 	void OnRestartTimerTimeout();
 
 	void Deactivate();
+
+	void QuitGame();
 };
